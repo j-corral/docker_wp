@@ -1,0 +1,32 @@
+version: "3"
+
+services:
+   db_node_domain:
+     image: mariadb
+     volumes:
+       - db_data:/var/lib/mysql
+     restart: always
+     env_file:
+       - .env/wp_db.env
+     container_name: wordpress_db
+
+   wordpress:
+     depends_on:
+       - db_node_domain
+     image: wordpress:latest
+     expose:
+       - 80
+       - 443
+     restart: always
+     volumes:
+       - ./data:/var/www/html:rw
+     env_file:
+       - .env/wp_app.env
+     container_name: wordpress_app
+volumes:
+    db_data:
+
+networks:
+  default:
+    external:
+      name: proxy_network
